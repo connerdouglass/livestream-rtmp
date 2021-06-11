@@ -102,7 +102,7 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 	}
 
 	// Let the API know the stream has started
-	if err := s.Api.MarkStreamStarted(config.StreamID); err != nil {
+	if err := s.Api.SetStreaming(config.StreamID, true); err != nil {
 		fmt.Println("Error marking stream as started: ", err.Error())
 		return
 	}
@@ -111,7 +111,7 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 	defer func() {
 
 		// Let the API know the stream has ended
-		if err := s.Api.MarkStreamEnded(config.StreamID); err != nil {
+		if err := s.Api.SetStreaming(config.StreamID, false); err != nil {
 			fmt.Println("Error marking stream as ended: ", err.Error())
 		}
 

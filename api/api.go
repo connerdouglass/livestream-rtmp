@@ -29,23 +29,12 @@ func (c *Client) GetStreamConfig(streamKey string) (*StreamPublishConfig, error)
 
 }
 
-func (c *Client) MarkStreamStarted(streamID string) error {
+func (c *Client) SetStreaming(streamID string, streaming bool) error {
 	return c.request(
-		"/v1/rtmp/stream/set-status",
+		"/v1/rtmp/stream/set-streaming",
 		map[string]interface{}{
 			"stream_id": streamID,
-			"status":    "live",
-		},
-		nil,
-	)
-}
-
-func (c *Client) MarkStreamEnded(streamID string) error {
-	return c.request(
-		"/v1/rtmp/stream/set-status",
-		map[string]interface{}{
-			"stream_id": streamID,
-			"status":    "ended",
+			"streaming": streaming,
 		},
 		nil,
 	)
