@@ -6,7 +6,7 @@
         <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     </head>
     <body>
-        <video id="video" muted autoplay controls></video>
+        <video id="video" muted autoplay controls width="100%"></video>
         <script>
             let hls = new Hls();
             hls.loadSource('/hls/{{ STREAM_ID }}/index.m3u8');
