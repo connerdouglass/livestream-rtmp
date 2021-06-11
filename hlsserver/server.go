@@ -15,7 +15,8 @@ import (
 var htmlTemplate string
 
 type Server struct {
-	HlsFactory *rtmp.HlsStreamHandlerFactory
+	HlsFactory   *rtmp.HlsStreamHandlerFactory
+	EnablePlayer bool
 }
 
 func (s *Server) Run(addr string) {
@@ -32,7 +33,11 @@ func (s *Server) Run(addr string) {
 
 	// Add the HLS serving endpoint
 	r.GET("/hls/:streamID/*filename", s.serveHls)
-	r.GET("/play/:streamID", s.streamDemoViewer)
+
+	// Add the player endpoint
+	if s.EnablePlayer {
+		r.GET("/play/:streamID", s.streamDemoViewer)
+	}
 
 	// Run the server
 	if err := r.Run(addr); err != nil {
