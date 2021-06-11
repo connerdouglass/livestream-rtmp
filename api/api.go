@@ -1,7 +1,5 @@
 package api
 
-import "fmt"
-
 // Client is the livestream-api client
 type Client struct {
 	Hostname     string
@@ -32,11 +30,23 @@ func (c *Client) GetStreamConfig(streamKey string) (*StreamPublishConfig, error)
 }
 
 func (c *Client) MarkStreamStarted(streamID string) error {
-	fmt.Println("Marking stream as STARTED: ", streamID)
-	return nil
+	return c.request(
+		"/v1/rtmp/stream/set-status",
+		map[string]interface{}{
+			"stream_id": streamID,
+			"status":    "live",
+		},
+		nil,
+	)
 }
 
 func (c *Client) MarkStreamEnded(streamID string) error {
-	fmt.Println("Marking stream as ENDED: ", streamID)
-	return nil
+	return c.request(
+		"/v1/rtmp/stream/set-status",
+		map[string]interface{}{
+			"stream_id": streamID,
+			"status":    "ended",
+		},
+		nil,
+	)
 }

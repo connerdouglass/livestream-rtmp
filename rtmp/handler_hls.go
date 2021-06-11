@@ -36,6 +36,7 @@ func (hf *HlsStreamHandlerFactory) NewHandler(streamConfig *api.StreamPublishCon
 
 	// Create the handler instance
 	handler := &HlsStreamHandler{
+		factory:      hf,
 		hlsPub:       hlsPub,
 		streamConfig: streamConfig,
 	}
