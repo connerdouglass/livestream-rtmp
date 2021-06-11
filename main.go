@@ -19,7 +19,7 @@ func main() {
 	// Create the livestream-api client
 	apiClient := &api.Client{
 		Hostname:     EnvOrDefault("API_HOSTNAME", "http://localhost:8080"),
-		RtmpPasscode: RequireEnv("API_PASSWORD"),
+		RtmpPasscode: RequireEnv("API_PASSCODE"),
 	}
 
 	// Create the handler factory
