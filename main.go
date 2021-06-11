@@ -22,7 +22,9 @@ func main() {
 	}
 
 	// Create the CDN configuration
-	cdnConfig := &rtmp.CdnHandlerConfig{}
+	cdnConfig := &rtmp.CdnHandlerConfig{
+		Filename: "/Users/conner/Desktop/stream.mp4",
+	}
 
 	// Create the RTMP server
 	rtmpServer := rtmp.Server{

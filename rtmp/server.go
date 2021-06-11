@@ -23,7 +23,7 @@ type activeStream struct {
 
 // StreamHandler processes incoming stream packets
 type StreamHandler interface {
-	av.Muxer
+	av.MuxCloser
 }
 
 type Server struct {
@@ -122,7 +122,7 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 	// Create the packet writer to write packets to the CDN
 	writer, err := s.NewStreamHandler(config)
 	if err != nil {
-		fmt.Println("Error creating packet writer: ", writer)
+		fmt.Println("Error creating packet writer: ", err.Error())
 		return
 	}
 
@@ -134,9 +134,21 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 
 	// Copy all of the packets from the stream, until it has concluded
 	if err := avutil.CopyPackets(writer, conn); err == io.EOF {
+
 		fmt.Println("Info: The server has stopped streaming.")
+
+		// Write the trailer
+		if err = writer.WriteTrailer(); err != nil {
+			fmt.Println("Error writing trailer: ", err.Error())
+		}
+
 	} else if err != nil {
 		fmt.Println("Stream ended with error: ", err.Error())
+	}
+
+	// Close the writer
+	if err = writer.Close(); err != nil {
+		fmt.Println("Error closing writer: ", err.Error())
 	}
 
 }
