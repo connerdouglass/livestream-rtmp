@@ -8,8 +8,8 @@ import (
 	"sync"
 
 	"github.com/godocompany/livestream-rtmp/api"
+	"github.com/nareix/joy4/av"
 	"github.com/nareix/joy4/av/avutil"
-	"github.com/nareix/joy4/av/pubsub"
 	"github.com/nareix/joy4/format"
 	joyRtmp "github.com/nareix/joy4/format/rtmp"
 )
@@ -18,12 +18,18 @@ type activeStream struct {
 	StreamKey     string
 	StreamID      string
 	PublishConfig *api.StreamPublishConfig
-	Queue         *pubsub.Queue
+	StreamHandler StreamHandler
+}
+
+// StreamHandler processes incoming stream packets
+type StreamHandler interface {
+	av.Muxer
 }
 
 type Server struct {
 	Address          string
 	Api              *api.Client
+	NewStreamHandler func(*api.StreamPublishConfig) (StreamHandler, error)
 	activeStreams    map[string]*activeStream
 	activeStreamsMut sync.RWMutex
 }
@@ -40,7 +46,6 @@ func (s *Server) Run() {
 	server := &joyRtmp.Server{
 		Addr:          s.Address,
 		HandlePublish: s.handlePublish,
-		HandlePlay:    s.handlePlay,
 	}
 
 	// Listen and serve the RTMP server
@@ -75,9 +80,7 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 		StreamKey:     streamKey,
 		StreamID:      config.StreamID,
 		PublishConfig: config,
-		Queue:         pubsub.NewQueue(),
 	}
-	defer stream.Queue.Close()
 
 	// Add the stream to the slice
 	s.activeStreamsMut.Lock()
@@ -98,59 +101,42 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 		return
 	}
 
-	// Write the headers to the queue
-	if err := stream.Queue.WriteHeader(streams); err != nil {
-		fmt.Println("Error writing stream headers: ", err.Error())
-		return
-	}
-
 	// Let the API know the stream has started
 	if err := s.Api.MarkStreamStarted(config.StreamID); err != nil {
 		fmt.Println("Error marking stream as started: ", err.Error())
 		return
 	}
 
-	fmt.Println("Info: The stream has started")
-
-	// Copy all of the packets from the stream, until it has concluded
-	if err := avutil.CopyPackets(stream.Queue, conn); err == io.EOF {
-
-		fmt.Println("Info: The server has stopped streaming.")
+	// Defer the cleanup function
+	defer func() {
 
 		// Let the API know the stream has ended
-		if err := s.Api.MarkStreamStarted(config.StreamID); err != nil {
+		if err := s.Api.MarkStreamEnded(config.StreamID); err != nil {
 			fmt.Println("Error marking stream as ended: ", err.Error())
 		}
 
-	} else if err != nil {
-		fmt.Println("Stream ended with error: ", err.Error())
-	}
+	}()
 
-}
+	fmt.Println("Info: The stream has started")
 
-func (s *Server) handlePlay(conn *joyRtmp.Conn) {
-
-	// Close the connection when everything is done
-	defer conn.Close()
-
-	// Get the stream ID from the connection URL
-	streamID := strings.TrimPrefix(conn.URL.Path, "/")
-
-	// Check if the stream ID is in the map
-	s.activeStreamsMut.RLock()
-	stream, streamExists := s.activeStreams[streamID]
-	s.activeStreamsMut.RUnlock()
-
-	// If it's not in the map, bail out
-	if !streamExists {
-		fmt.Println("Stream does not exist: ", streamID)
+	// Create the packet writer to write packets to the CDN
+	writer, err := s.NewStreamHandler(config)
+	if err != nil {
+		fmt.Println("Error creating packet writer: ", writer)
 		return
 	}
 
-	// Serve the entire queue to the viewer
-	if err := avutil.CopyFile(conn, stream.Queue.Latest()); err != nil && err != io.EOF {
-		fmt.Printf("%+v\n", err)
-		fmt.Println("Info: Couldn't serve the stream to a viewer:", err)
+	// Write the headers to the queue
+	if err := writer.WriteHeader(streams); err != nil {
+		fmt.Println("Error writing stream headers: ", err.Error())
+		return
+	}
+
+	// Copy all of the packets from the stream, until it has concluded
+	if err := avutil.CopyPackets(writer, conn); err == io.EOF {
+		fmt.Println("Info: The server has stopped streaming.")
+	} else if err != nil {
+		fmt.Println("Stream ended with error: ", err.Error())
 	}
 
 }

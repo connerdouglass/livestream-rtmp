@@ -21,10 +21,14 @@ func main() {
 		RtmpPasscode: RequireEnv("API_PASSWORD"),
 	}
 
+	// Create the CDN configuration
+	cdnConfig := &rtmp.CdnHandlerConfig{}
+
 	// Create the RTMP server
 	rtmpServer := rtmp.Server{
-		Address: EnvOrDefault("RTMP_ADDR", ":1935"),
-		Api:     apiClient,
+		Address:          EnvOrDefault("RTMP_ADDR", ":1935"),
+		Api:              apiClient,
+		NewStreamHandler: rtmp.CdnStreamHandlerFactory(cdnConfig),
 	}
 
 	// Run the RTMP server. This blocks the main goroutine
