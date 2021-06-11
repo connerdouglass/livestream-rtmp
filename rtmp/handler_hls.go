@@ -68,8 +68,27 @@ func (hf *HlsStreamHandlerFactory) GetHandler(streamID string) *HlsStreamHandler
 
 }
 
+// streamClosed called when a stream has been closed
+func (hf *HlsStreamHandlerFactory) streamClosed(stream *HlsStreamHandler) {
+
+	// Acquire access to the handlers slice as a writer
+	hf.handlersMut.Lock()
+	defer hf.handlersMut.Unlock()
+
+	// Create a new slice for the values, minus this stream
+	newHandlers := []*HlsStreamHandler{}
+	for _, handler := range hf.handlers {
+		if handler.streamConfig.StreamID != stream.streamConfig.StreamID {
+			newHandlers = append(newHandlers, handler)
+		}
+	}
+	hf.handlers = newHandlers
+
+}
+
 // HlsStreamHandler is the stream handler
 type HlsStreamHandler struct {
+	factory      *HlsStreamHandlerFactory
 	hlsPub       *hls.Publisher
 	streamConfig *api.StreamPublishConfig
 }
@@ -89,7 +108,15 @@ func (h *HlsStreamHandler) WriteTrailer() error {
 }
 
 func (h *HlsStreamHandler) Close() error {
+
+	// Close the HLS publisher
 	h.hlsPub.Close()
+
+	// Remove this stream from the factory
+	if h.factory != nil {
+		h.factory.streamClosed(h)
+	}
+
 	return nil
 }
 

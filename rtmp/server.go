@@ -23,8 +23,7 @@ type activeStream struct {
 
 // StreamHandler processes incoming stream packets
 type StreamHandler interface {
-	// av.MuxCloser
-	av.Muxer
+	av.MuxCloser
 }
 
 type Server struct {
@@ -127,6 +126,13 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 		return
 	}
 
+	// Defer a cleanup handler to close the writer
+	defer func() {
+		if err = writer.Close(); err != nil {
+			fmt.Println("Error closing writer: ", err.Error())
+		}
+	}()
+
 	// Write the headers to the queue
 	if err := writer.WriteHeader(streams); err != nil {
 		fmt.Println("Error writing stream headers: ", err.Error())
@@ -146,10 +152,5 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 	} else if err != nil {
 		fmt.Println("Stream ended with error: ", err.Error())
 	}
-
-	// // Close the writer
-	// if err = writer.Close(); err != nil {
-	// 	fmt.Println("Error closing writer: ", err.Error())
-	// }
 
 }
