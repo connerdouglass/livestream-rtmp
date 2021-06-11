@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"strings"
-	"time"
 
 	"github.com/godocompany/livestream-rtmp/api"
+	"github.com/godocompany/livestream-rtmp/hlsserver"
 	"github.com/godocompany/livestream-rtmp/rtmp"
 	"github.com/joho/godotenv"
 )
@@ -26,8 +24,7 @@ func main() {
 
 	// Create the handler factory
 	handlerFactory := &rtmp.HlsStreamHandlerFactory{
-		BasePath: "/hls/",
-		WorkDir:  "./hlsdata",
+		WorkDir: "./hlsdata",
 	}
 
 	// Create the RTMP server
@@ -37,35 +34,12 @@ func main() {
 		NewStreamHandler: handlerFactory.NewHandler,
 	}
 
-	go func() {
-		http.Handle(handlerFactory.BasePath, handlerFactory)
-		http.Handle("/", http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-			r := strings.NewReader(home)
-			http.ServeContent(rw, req, "index.html", time.Time{}, r)
-		}))
-		http.ListenAndServe(":8080", nil)
-	}()
+	hlsServer := &hlsserver.Server{
+		HlsFactory: handlerFactory,
+	}
+	go hlsServer.Run(EnvOrDefault("HLS_ADDR", ":8081"))
 
 	// Run the RTMP server. This blocks the main goroutine
 	rtmpServer.Run()
 
 }
-
-const home = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>HLS demo</title>
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-</head>
-<body>
-<video id="video" muted autoplay controls></video>
-<script>
-let hls = new Hls();
-hls.loadSource('/hls/helloworld/index.m3u8');
-hls.attachMedia(document.getElementById('video'));
-// hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
-</script>
-</body>
-</html>
-`

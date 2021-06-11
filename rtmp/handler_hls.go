@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 	"sync"
 
 	"github.com/godocompany/livestream-rtmp/api"
@@ -18,7 +17,6 @@ type HlsHandlerConfig struct {
 }
 
 type HlsStreamHandlerFactory struct {
-	BasePath    string
 	WorkDir     string
 	handlers    []*HlsStreamHandler
 	handlersMut sync.RWMutex
@@ -52,54 +50,21 @@ func (hf *HlsStreamHandlerFactory) NewHandler(streamConfig *api.StreamPublishCon
 
 }
 
-func (hf *HlsStreamHandlerFactory) parseStreamIDFromRequest(req *http.Request) string {
+func (hf *HlsStreamHandlerFactory) GetHandler(streamID string) *HlsStreamHandler {
 
-	// If there is no request or no URL, return empty string
-	if req == nil || req.URL == nil {
-		return ""
-	}
+	// Acquire access to the handlers slice as a reader
+	hf.handlersMut.RLock()
+	defer hf.handlersMut.RUnlock()
 
-	// Get the portion of the URL after the base path
-	relativePath := strings.TrimPrefix(req.URL.Path, hf.BasePath)
-
-	// Split the URL up by slashes
-	pathParts := strings.Split(relativePath, "/")
-
-	// If there are no parts
-	if len(pathParts) == 0 {
-		return ""
-	}
-
-	// Return the first part otherwise
-	return pathParts[0]
-
-}
-
-func (hf *HlsStreamHandlerFactory) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-
-	// Get the stream ID from the URL
-	streamID := hf.parseStreamIDFromRequest(req)
-
-	// If there is an identifier
-	if len(streamID) > 0 {
-
-		// Acquire access to the handlers slice as a reader
-		hf.handlersMut.RLock()
-		defer hf.handlersMut.RUnlock()
-
-		// Loop through the handlers
-		for _, handler := range hf.handlers {
-			if handler.streamConfig.StreamID == streamID {
-				handler.hlsPub.ServeHTTP(rw, req)
-				return
-			}
+	// Loop through the handlers
+	for _, handler := range hf.handlers {
+		if handler.streamConfig.StreamID == streamID {
+			return handler
 		}
-
 	}
 
-	// If we get here, serve a 404 error
-	rw.WriteHeader(http.StatusNotFound)
-	rw.Write([]byte("Not found"))
+	// Return nil instead
+	return nil
 
 }
 
@@ -126,4 +91,8 @@ func (h *HlsStreamHandler) WriteTrailer() error {
 func (h *HlsStreamHandler) Close() error {
 	h.hlsPub.Close()
 	return nil
+}
+
+func (h *HlsStreamHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	h.hlsPub.ServeHTTP(rw, req)
 }
