@@ -23,7 +23,8 @@ type activeStream struct {
 
 // StreamHandler processes incoming stream packets
 type StreamHandler interface {
-	av.MuxCloser
+	// av.MuxCloser
+	av.Muxer
 }
 
 type Server struct {
@@ -146,9 +147,9 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 		fmt.Println("Stream ended with error: ", err.Error())
 	}
 
-	// Close the writer
-	if err = writer.Close(); err != nil {
-		fmt.Println("Error closing writer: ", err.Error())
-	}
+	// // Close the writer
+	// if err = writer.Close(); err != nil {
+	// 	fmt.Println("Error closing writer: ", err.Error())
+	// }
 
 }
