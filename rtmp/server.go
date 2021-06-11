@@ -66,7 +66,7 @@ func (s *Server) handlePublish(conn *joyRtmp.Conn) {
 	streamKey := strings.TrimPrefix(conn.URL.Path, "/")
 
 	// Get the stream info from the stream key
-	config, err := s.Api.GetStreamPublishData(streamKey)
+	config, err := s.Api.GetStreamConfig(streamKey)
 	if err != nil {
 		fmt.Println("Error getting stream config: ", err.Error())
 		return

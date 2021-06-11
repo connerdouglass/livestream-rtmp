@@ -35,7 +35,8 @@ func main() {
 	}
 
 	hlsServer := &hlsserver.Server{
-		HlsFactory: handlerFactory,
+		HlsFactory:   handlerFactory,
+		EnablePlayer: true,
 	}
 	go hlsServer.Run(EnvOrDefault("HLS_ADDR", ":8081"))
 

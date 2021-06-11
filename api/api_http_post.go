@@ -3,6 +3,7 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 )
@@ -54,10 +55,40 @@ func (c *Client) request(url string, body interface{}, result interface{}) error
 		return err
 	}
 
+	// Full response body
+	var fullResponse map[string]interface{}
+
 	// Unmarshal the JSON into the result
-	return json.Unmarshal(
-		buf.Bytes(),
-		result,
-	)
+	if err := json.Unmarshal(buf.Bytes(), &fullResponse); err != nil {
+		return err
+	}
+
+	// If there is an error key in the root
+	if errVal, ok := fullResponse["error"]; ok {
+		if errStr, ok := errVal.(string); ok {
+			return errors.New(errStr)
+		}
+		return fmt.Errorf("something went wrong: %+v", errVal)
+	}
+
+	// Get the data value
+	dataVal, ok := fullResponse["data"]
+	if !ok {
+		return errors.New("response contains no data value")
+	}
+
+	// Marshal it back to JSON
+	jsonDataBytes, err := json.Marshal(dataVal)
+	if err != nil {
+		return err
+	}
+
+	// Unmarshal the values into the final output response
+	if err := json.Unmarshal(jsonDataBytes, &result); err != nil {
+		return err
+	}
+
+	// Return without error
+	return nil
 
 }

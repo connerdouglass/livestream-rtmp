@@ -11,7 +11,7 @@ import (
 	"github.com/godocompany/livestream-rtmp/rtmp"
 )
 
-//go:embed viewer.html
+//go:embed player.html
 var htmlTemplate string
 
 type Server struct {
