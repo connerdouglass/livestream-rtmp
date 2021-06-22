@@ -27,7 +27,7 @@ func (hf *HlsStreamHandlerFactory) NewHandler(streamConfig *api.StreamPublishCon
 
 	// Create the HLS publisher
 	hlsPub := &hls.Publisher{
-		FragmentLength: 5 * time.Second,
+		FragmentLength: 2 * time.Second,
 		WorkDir:        path.Join(hf.WorkDir, fmt.Sprintf("stream_%s", streamConfig.StreamID)),
 	}
 
