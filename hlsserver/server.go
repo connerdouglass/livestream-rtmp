@@ -28,7 +28,8 @@ func (s *Server) Run(addr string) {
 	corsCfg := cors.DefaultConfig()
 	corsCfg.AllowOriginFunc = s.allowCorsOrigin
 	corsCfg.AllowCredentials = true
-	corsCfg.AddAllowHeaders("Accept", "User-Agent", "Authorization")
+	corsCfg.AddAllowHeaders("Accept", "User-Agent", "Authorization", "Range")
+	corsCfg.AddExposeHeaders("Content-Length")
 	r.Use(cors.New(corsCfg))
 
 	// Add the HLS serving endpoint
