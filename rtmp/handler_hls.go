@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 	"sync"
+	"time"
 
 	"github.com/godocompany/livestream-rtmp/api"
 	"github.com/godocompany/livestream-rtmp/hls"
@@ -26,7 +27,8 @@ func (hf *HlsStreamHandlerFactory) NewHandler(streamConfig *api.StreamPublishCon
 
 	// Create the HLS publisher
 	hlsPub := &hls.Publisher{
-		WorkDir: path.Join(hf.WorkDir, fmt.Sprintf("stream_%s", streamConfig.StreamID)),
+		FragmentLength: 5 * time.Second,
+		WorkDir:        path.Join(hf.WorkDir, fmt.Sprintf("stream_%s", streamConfig.StreamID)),
 	}
 
 	// Make sure the directory exists
