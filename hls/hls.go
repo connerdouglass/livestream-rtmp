@@ -53,7 +53,8 @@ type Publisher struct {
 	// WorkDir is a temporary storage location for segments. Can be empty, in which case the default system temp dir is used.
 	WorkDir string
 	// Prefetch reveals upcoming segments before they begin so the client can initiate the download early
-	Prefetch bool
+	Prefetch  bool
+	startTime time.Time
 
 	pid     string // unique filename for this instance of the stream
 	streams []av.CodecData
@@ -159,7 +160,13 @@ type ExtendedPacket struct {
 
 // WritePacket publishes a single packet
 func (p *Publisher) WritePacket(pkt av.Packet) error {
-	return p.WriteExtendedPacket(ExtendedPacket{Packet: pkt})
+	if p.startTime.IsZero() {
+		p.startTime = time.Now().UTC()
+	}
+	return p.WriteExtendedPacket(ExtendedPacket{
+		Packet:      pkt,
+		ProgramTime: p.startTime.Add(pkt.Time),
+	})
 }
 
 // WriteExtendedPacket publishes a packet with additional metadata
