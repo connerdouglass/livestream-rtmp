@@ -116,7 +116,7 @@ func (s *Segment) Release() {
 }
 
 // Format a playlist fragment for this segment
-func (s *Segment) Format(b *bytes.Buffer, includeParts bool) {
+func (s *Segment) Format(b *bytes.Buffer, includeParts bool, prefetch bool) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if !s.final && (!includeParts || len(s.parts) == 0) {
@@ -128,7 +128,9 @@ func (s *Segment) Format(b *bytes.Buffer, includeParts bool) {
 	if s.dcn {
 		b.WriteString("#EXT-X-DISCONTINUITY\n")
 	}
+	parentDur := s.dur
 	if includeParts {
+		parentDur = time.Duration(0)
 		for i, part := range s.parts {
 			var independent string
 			if part.Independent {
@@ -136,9 +138,13 @@ func (s *Segment) Format(b *bytes.Buffer, includeParts bool) {
 			}
 			fmt.Fprintf(b, "#EXT-X-PART:DURATION=%f,%sURI=\"%s.%d%s\"\n",
 				part.Duration.Seconds(), independent, s.base, i, s.suf)
+			parentDur += part.Duration
 		}
 	}
 	if s.final {
-		fmt.Fprintf(b, "#EXTINF:%f,\n%s%s\n", s.dur.Seconds(), s.base, s.suf)
+		fmt.Fprintf(b, "#EXTINF:%f,\n%s%s\n", parentDur.Seconds(), s.base, s.suf)
+	}
+	if prefetch {
+		fmt.Fprintf(b, "#EXT-X-PRELOAD-HINT:TYPE=PART,URI=\"%s.%d%s\"\n", s.base, len(s.parts), s.suf)
 	}
 }
