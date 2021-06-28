@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 	"github.com/godocompany/livestream-rtmp/rtmp"
 )
@@ -23,6 +24,7 @@ func (s *Server) Run(addr string) {
 
 	// Create the gin server
 	r := gin.Default()
+	r.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	// Configure CORS for the HLS server
 	corsCfg := cors.DefaultConfig()

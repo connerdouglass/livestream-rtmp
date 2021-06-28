@@ -49,6 +49,8 @@ func New(name, workDir, ctype string, start time.Duration, dcn bool, programTime
 	s.cond.L = &s.mu
 	if !programTime.IsZero() {
 		s.programTime = programTime.UTC().Format("2006-01-02T15:04:05.999Z07:00")
+	} else {
+		s.programTime = time.Now().UTC().Format("2006-01-02T15:04:05.999Z07:00")
 	}
 	var err error
 	s.f, err = ioutil.TempFile(workDir, name)
