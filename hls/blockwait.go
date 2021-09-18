@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/segment"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/segment"
 )
 
 type (

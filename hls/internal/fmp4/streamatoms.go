@@ -3,8 +3,8 @@ package fmp4
 import (
 	"fmt"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/fmp4/esio"
-	"github.com/godocompany/livestream-rtmp/hls/internal/fmp4/fmp4io"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fmp4/esio"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fmp4/fmp4io"
 	"github.com/nareix/joy4/av"
 	"github.com/nareix/joy4/codec/aacparser"
 	"github.com/nareix/joy4/codec/h264parser"

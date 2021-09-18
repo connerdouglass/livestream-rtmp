@@ -1,7 +1,7 @@
 package fmp4io
 
 import (
-	"github.com/godocompany/livestream-rtmp/hls/internal/fmp4/esio"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fmp4/esio"
 	"github.com/nareix/joy4/utils/bits/pio"
 )
 

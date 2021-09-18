@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/fragment"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fragment"
 )
 
 // Segment holds a single HLS segment which can be written to in parts

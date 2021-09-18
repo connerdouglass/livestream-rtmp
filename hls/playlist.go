@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/segment"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/segment"
 )
 
 const maxFutureMSN = 3

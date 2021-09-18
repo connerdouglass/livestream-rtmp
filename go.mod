@@ -1,4 +1,4 @@
-module github.com/godocompany/livestream-rtmp
+module github.com/connerdouglass/livestream-rtmp
 
 go 1.16
 

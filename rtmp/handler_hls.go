@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/api"
-	"github.com/godocompany/livestream-rtmp/hls"
+	"github.com/connerdouglass/livestream-rtmp/api"
+	"github.com/connerdouglass/livestream-rtmp/hls"
 	"github.com/nareix/joy4/av"
 )
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/fragment"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fragment"
 	"github.com/nareix/joy4/av"
 	"github.com/nareix/joy4/format/ts"
 )

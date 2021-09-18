@@ -8,13 +8,13 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/codectag"
-	"github.com/godocompany/livestream-rtmp/hls/internal/dashmpd"
-	"github.com/godocompany/livestream-rtmp/hls/internal/fmp4"
-	"github.com/godocompany/livestream-rtmp/hls/internal/fragment"
-	"github.com/godocompany/livestream-rtmp/hls/internal/ratedetect"
-	"github.com/godocompany/livestream-rtmp/hls/internal/segment"
-	"github.com/godocompany/livestream-rtmp/hls/internal/tsfrag"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/codectag"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/dashmpd"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fmp4"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fragment"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/ratedetect"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/segment"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/tsfrag"
 	"github.com/nareix/joy4/av"
 )
 

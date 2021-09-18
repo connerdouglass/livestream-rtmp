@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/godocompany/livestream-rtmp/api"
+	"github.com/connerdouglass/livestream-rtmp/api"
 	"github.com/nareix/joy4/av"
 	"github.com/nareix/joy4/av/avutil"
 	"github.com/nareix/joy4/format"

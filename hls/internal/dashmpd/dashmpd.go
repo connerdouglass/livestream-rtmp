@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/ratedetect"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/ratedetect"
 )
 
 type MPD struct {

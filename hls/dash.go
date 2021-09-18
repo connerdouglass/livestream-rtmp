@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/dashmpd"
-	"github.com/godocompany/livestream-rtmp/hls/internal/timescale"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/dashmpd"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/timescale"
 	"github.com/nareix/joy4/av"
 )
 

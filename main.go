@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/godocompany/livestream-rtmp/api"
-	"github.com/godocompany/livestream-rtmp/hlsserver"
-	"github.com/godocompany/livestream-rtmp/rtmp"
+	"github.com/connerdouglass/livestream-rtmp/api"
+	"github.com/connerdouglass/livestream-rtmp/hlsserver"
+	"github.com/connerdouglass/livestream-rtmp/rtmp"
 	"github.com/joho/godotenv"
 )
 

@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/godocompany/livestream-rtmp/hls/internal/fmp4/fmp4io"
-	"github.com/godocompany/livestream-rtmp/hls/internal/fragment"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fmp4/fmp4io"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fragment"
 	"github.com/nareix/joy4/av"
 )
 

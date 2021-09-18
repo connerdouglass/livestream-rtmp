@@ -1,9 +1,9 @@
 package fmp4
 
 import (
-	"github.com/godocompany/livestream-rtmp/hls/internal/fmp4/fmp4io"
-	"github.com/godocompany/livestream-rtmp/hls/internal/fragment"
-	"github.com/godocompany/livestream-rtmp/hls/internal/timescale"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fmp4/fmp4io"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/fragment"
+	"github.com/connerdouglass/livestream-rtmp/hls/internal/timescale"
 	"github.com/nareix/joy4/av"
 	"github.com/nareix/joy4/utils/bits/pio"
 )
